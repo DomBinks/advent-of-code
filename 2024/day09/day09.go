@@ -38,7 +38,7 @@ func main() {
 	}
 }
 
-func part1(input string) string {
+func getDiskMapSystemSize(input string) ([]int, int) {
 	diskMapStrs := strings.Split(input, "\n")[0]
 	diskMap := make([]int, len(diskMapStrs))
 	size := 0
@@ -49,51 +49,10 @@ func part1(input string) string {
 		size += elem
 	}
 
-	system := make([]int, size)
-	index := 0
-	id := 0
-	for i := 0; i < len(diskMap); i++ {
-		if i%2 == 0 {
-			for _ = range diskMap[i] {
-				system[index] = id
-				index += 1
-			}
-			id += 1
-		} else {
-			for _ = range diskMap[i] {
-				system[index] = -1
-				index += 1
-			}
-		}
-	}
-
-	for i := range len(system) {
-		for i < len(system) && system[i] == -1 {
-			system[i] = system[len(system)-1]
-			system = system[:len(system)-1]
-		}
-	}
-
-	total := 0
-	for i := range system {
-		total += i * system[i]
-	}
-
-	out := strconv.Itoa(total)
-	return out
+	return diskMap, size
 }
 
-func part2(input string) string {
-	diskMapStrs := strings.Split(input, "\n")[0]
-	diskMap := make([]int, len(diskMapStrs))
-	size := 0
-	for i := 0; i < len(diskMapStrs); i++ {
-		elem, err := strconv.Atoi(string(diskMapStrs[i]))
-		check(err)
-		diskMap[i] = elem
-		size += elem
-	}
-
+func getSystemFilesGaps(diskMap []int, size int) ([]int, [][]int, [][]int) {
 	system := make([]int, size)
 	gaps := make([][]int, 0)  // length, start
 	files := make([][]int, 0) // length, start, id
@@ -118,6 +77,37 @@ func part2(input string) string {
 		}
 	}
 
+	return system, files, gaps
+}
+
+func checksum(system []int) int {
+	total := 0
+	for i := range system {
+		if system[i] != -1 {
+			total += i * system[i]
+		}
+	}
+
+	return total
+}
+
+func part1(input string) string {
+	system, _, _ := getSystemFilesGaps(getDiskMapSystemSize(input))
+
+	for i := range len(system) {
+		for i < len(system) && system[i] == -1 {
+			system[i] = system[len(system)-1]
+			system = system[:len(system)-1]
+		}
+	}
+
+	out := strconv.Itoa(checksum(system))
+	return out
+}
+
+func part2(input string) string {
+	system, files, gaps := getSystemFilesGaps(getDiskMapSystemSize(input))
+
 	slices.Reverse(files)
 
 	for i := range files {
@@ -140,13 +130,6 @@ func part2(input string) string {
 		}
 	}
 
-	total := 0
-	for i := range system {
-		if system[i] != -1 {
-			total += i * system[i]
-		}
-	}
-
-	out := strconv.Itoa(total)
+	out := strconv.Itoa(checksum(system))
 	return out
 }
