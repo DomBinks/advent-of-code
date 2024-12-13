@@ -47,7 +47,7 @@ func part1(input string) string {
 		stones[i] = elem
 	}
 
-	for x := range 25 {
+	for _ = range 25 {
 		i := 0
 		for i < len(stones) {
 			if stones[i] == 0 {
