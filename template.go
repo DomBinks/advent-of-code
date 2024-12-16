@@ -23,7 +23,7 @@ func getPart() string {
 }
 
 func main() {
-	data, err := os.ReadFile("day01.txt")
+	data, err := os.ReadFile("example.txt")
 	check(err)
 	input := string(data)
 	part := getPart()
