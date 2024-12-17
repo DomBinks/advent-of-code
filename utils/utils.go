@@ -3,7 +3,7 @@ package utils
 import "strings"
 
 type Pos struct {
-	y, x int
+	Y, X int
 }
 
 func Check(e error) {
